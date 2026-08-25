@@ -50,7 +50,16 @@ async def receive_aadhaar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Start Playwright session for this user
     pw = await async_playwright().start()
-    browser = await pw.chromium.launch(headless=True)
+    browser = await pw.chromium.launch(
+        headless=True,
+        args=[
+            '--no-sandbox', 
+            '--disable-setuid-sandbox', 
+            '--disable-dev-shm-usage', # CRITICAL FOR DOCKER
+            '--disable-gpu',
+            '--single-process'
+        ]
+    )
     b_context = await browser.new_context(
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     )
@@ -65,7 +74,6 @@ async def receive_aadhaar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         await page.goto("https://myaadhaar.uidai.gov.in/genricDownloadAadhaar", timeout=60000)
-        await page.wait_for_load_state("networkidle")
         
         # Robust locator for Aadhaar input
         await page.locator("input[placeholder*='Aadhaar']").first.fill(aadhaar_num)
