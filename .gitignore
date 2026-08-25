@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+*.pdf
+*.png
+ref.md
+github.md

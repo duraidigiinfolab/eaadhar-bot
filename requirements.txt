@@ -1,0 +1,5 @@
+playwright
+python-telegram-bot
+python-dotenv
+flask
+gunicorn
